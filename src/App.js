@@ -1,25 +1,55 @@
-import logo from './logo.svg';
 import './App.css';
+import { useTodoLayerValue } from './context/TodoContext';
+import TodoList from "./components/TodoList"
+import React, { useState,useEffect, useRef } from 'react'
 
-function App() {
+const App = () => {
+
+  const [{todos}, dispatch] = useTodoLayerValue();
+  const [content, setContent] = useState('');
+
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    inputRef.current.focus();
+  }, []);
+
+  const handleSubmit = (e) => {
+    console.log(content)
+    e.preventDefault();
+
+    if(!content && content.length < 1) return;
+
+    const newTodo = {
+      id: Math.floor(Math.random() * 12312312312),
+      content,
+      isCompleted: false,
+    };
+
+    dispatch({
+      type: 'ADD_TODO',
+      payload: newTodo,
+    });
+
+    setContent(' ')
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className = "container">
+      <form onSubmit = {handleSubmit} className = "todo-form">
+        <input type = "text" className = "todo-input" onChange = {((event)  => setContent(event.target.value))} value = {content} ref={inputRef}></input>
+        <button className = "todo-button">
+          ADD
+        </button>
+      </form>
+
+      {/* ToDoList Add Todo */}
+
+      <TodoList todos = {todos} />
+
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
+
